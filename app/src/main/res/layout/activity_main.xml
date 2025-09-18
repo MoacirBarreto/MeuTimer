@@ -19,12 +19,12 @@
         android:text="@string/titulo_app"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/cor_destaque"
         android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/cor_destaque"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextClock
         android:id="@+id/textClock"
@@ -47,12 +47,12 @@
         android:layout_marginEnd="32dp"
         android:contentDescription="@string/desc_aumentar_segundo"
         app:icon="@drawable/outline_arrow_circle_up_24"
+        app:iconTint="@color/texto_primario"
         app:layout_constraintBottom_toTopOf="@+id/btnDiminuirSegundo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/editTextTimer"
         app:layout_constraintTop_toTopOf="@+id/editTextTimer"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:iconTint="@color/texto_primario"/>
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDiminuirSegundo"
@@ -61,11 +61,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/desc_diminuir_segundo"
         app:icon="@drawable/outline_arrow_circle_down_24"
+        app:iconTint="@color/texto_primario"
         app:layout_constraintBottom_toBottomOf="@+id/editTextTimer"
         app:layout_constraintEnd_toEndOf="@+id/btnAumentarSegundo"
         app:layout_constraintStart_toStartOf="@+id/btnAumentarSegundo"
-        app:layout_constraintTop_toBottomOf="@+id/btnAumentarSegundo"
-        app:iconTint="@color/texto_primario"/>
+        app:layout_constraintTop_toBottomOf="@+id/btnAumentarSegundo" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAumentarMinuto"
@@ -76,12 +76,12 @@
         android:layout_marginEnd="8dp"
         android:contentDescription="@string/desc_aumentar_minuto"
         app:icon="@drawable/outline_arrow_circle_up_24"
+        app:iconTint="@color/texto_primario"
         app:layout_constraintBottom_toTopOf="@+id/btnDiminuirMinuto"
         app:layout_constraintEnd_toStartOf="@+id/editTextTimer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/editTextTimer"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:iconTint="@color/texto_primario"/>
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDiminuirMinuto"
@@ -90,11 +90,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/desc_diminuir_minuto"
         app:icon="@drawable/outline_arrow_circle_down_24"
+        app:iconTint="@color/texto_primario"
         app:layout_constraintBottom_toBottomOf="@+id/editTextTimer"
         app:layout_constraintEnd_toEndOf="@+id/btnAumentarMinuto"
         app:layout_constraintStart_toStartOf="@+id/btnAumentarMinuto"
-        app:layout_constraintTop_toBottomOf="@+id/btnAumentarMinuto"
-        app:iconTint="@color/texto_primario"/>
+        app:layout_constraintTop_toBottomOf="@+id/btnAumentarMinuto" />
 
     <EditText
         android:id="@+id/editTextTimer"
@@ -123,14 +123,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/botao_iniciar"
-        app:icon="@android:drawable/ic_media_play"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTimer"
         android:textColor="@color/cor_destaque_texto"
         app:backgroundTint="@color/cor_destaque"
+        app:icon="@android:drawable/ic_media_play"
         app:iconTint="@color/cor_destaque_texto"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTimer" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnPausar"
@@ -139,11 +138,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/botao_pausar"
+        android:textColor="@color/texto_primario"
         app:layout_constraintEnd_toStartOf="@+id/btnZerar"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnIniciar"
-        android:textColor="@color/texto_primario"
         app:strokeColor="@color/texto_secundario" />
 
     <com.google.android.material.button.MaterialButton
@@ -151,12 +150,25 @@
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:text="@string/botao_zerar"
+        android:textColor="@color/texto_primario"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnReiniciar"
         app:layout_constraintStart_toEndOf="@+id/btnPausar"
         app:layout_constraintTop_toTopOf="@+id/btnPausar"
+        app:strokeColor="@color/texto_secundario" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnReiniciar"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/botao_reiniciar"
         android:textColor="@color/texto_primario"
-        app:strokeColor="@color/texto_secundario"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnZerar"
+        app:layout_constraintTop_toTopOf="@+id/btnPausar"
+        app:strokeColor="@color/texto_secundario" />
 </androidx.constraintlayout.widget.ConstraintLayout>

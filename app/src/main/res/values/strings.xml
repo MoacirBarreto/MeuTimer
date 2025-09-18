@@ -9,4 +9,5 @@
     <string name="botao_iniciar">Iniciar</string>
     <string name="botao_pausar">Pausar</string>
     <string name="botao_zerar">Zerar</string>
+    <string name="botao_reiniciar">Reiniciar</string>
 </resources>
