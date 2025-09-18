@@ -7,6 +7,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import devandroid.moacir.meutimer.databinding.ActivityMainBinding
 import java.util.Locale
+import android.content.res.Configuration
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.transition.TransitionManager
+import android.os.Vibrator
+import android.os.Build
+import android.os.VibrationEffect
 
 //import androidx.compose.ui.semantics.text
 
@@ -39,12 +45,17 @@ class MainActivity : AppCompatActivity() {
     // Variáveis para controlar o estado do timer
     private var tempoRestanteEmMs: Long = 0
     private var timerEstaRodando = false
+    private val portraitConstraints = ConstraintSet()
+    private val landscapeConstraints = ConstraintSet()
+    private var mediaPlayer: MediaPlayer? = null
+    private lateinit var vibrator: Vibrator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Infla o layout usando o View Binding e o define como o conteúdo da tela
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
 
         // Configura os cliques dos botões
         binding.btnIniciar.setOnClickListener {
@@ -66,6 +77,72 @@ class MainActivity : AppCompatActivity() {
         // Botões de Segundos (NOVOS)
         binding.btnAumentarSegundo.setOnClickListener { alterarTempo(0, 5) }
         binding.btnDiminuirSegundo.setOnClickListener { alterarTempo(0, -5) }
+
+        setupConstraints()
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            landscapeConstraints.applyTo(binding.main)
+        } else {
+            portraitConstraints.applyTo(binding.main)
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Anima suavemente a transição entre os layouts
+        TransitionManager.beginDelayedTransition(binding.main)
+
+        // Verifica a nova orientação e aplica o conjunto de restrições correto
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            landscapeConstraints.applyTo(binding.main)
+        } else {
+            portraitConstraints.applyTo(binding.main)
+        }
+    }
+
+    private fun setupConstraints() {
+        // Salva o estado atual (do XML) como o layout de retrato
+        portraitConstraints.clone(binding.main)
+        // Cria uma cópia para começar a modificar para o layout de paisagem
+        landscapeConstraints.clone(binding.main)
+
+        // --- INÍCIO DAS MODIFICAÇÕES PARA O MODO PAISAGEM ---
+
+        // 1. Ocultar o Título e o Relógio para economizar espaço vertical
+        landscapeConstraints.setVisibility(R.id.textViewTitulo, ConstraintSet.GONE)
+        landscapeConstraints.setVisibility(R.id.textClock, ConstraintSet.GONE)
+
+        // 2. Centralizar verticalmente o EditText e movê-lo um pouco para a esquerda
+        landscapeConstraints.connect(R.id.editTextTimer, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+        landscapeConstraints.connect(R.id.editTextTimer, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+        landscapeConstraints.setHorizontalBias(R.id.editTextTimer, 0.4f)
+
+        // 3. Mover os botões de controle (Iniciar, Pausar, Zerar) para o lado direito
+        val chainViews = intArrayOf(R.id.btnIniciar, R.id.btnPausar, R.id.btnZerar)
+        val chainWeights = floatArrayOf(0f, 0f, 0f) // Não precisamos de pesos
+
+        // Limpa as constraints verticais antigas dos botões para evitar conflitos
+        landscapeConstraints.clear(R.id.btnIniciar, ConstraintSet.TOP)
+        landscapeConstraints.clear(R.id.btnPausar, ConstraintSet.TOP)
+        landscapeConstraints.clear(R.id.btnZerar, ConstraintSet.TOP)
+
+        // Cria uma corrente vertical com os botões, "empacotando-os" no centro
+        landscapeConstraints.createVerticalChain(
+            ConstraintSet.PARENT_ID, ConstraintSet.TOP,
+            ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM,
+            chainViews, chainWeights, ConstraintSet.CHAIN_PACKED
+        )
+        // Alinha a corrente de botões à direita do EditText
+        landscapeConstraints.connect(R.id.btnIniciar, ConstraintSet.START, R.id.editTextTimer, ConstraintSet.END, 32)
+        landscapeConstraints.connect(R.id.btnIniciar, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 32)
+        landscapeConstraints.connect(R.id.btnPausar, ConstraintSet.START, R.id.btnIniciar, ConstraintSet.START)
+        landscapeConstraints.connect(R.id.btnPausar, ConstraintSet.END, R.id.btnIniciar, ConstraintSet.END)
+        landscapeConstraints.connect(R.id.btnZerar, ConstraintSet.START, R.id.btnIniciar, ConstraintSet.START)
+        landscapeConstraints.connect(R.id.btnZerar, ConstraintSet.END, R.id.btnIniciar, ConstraintSet.END)
+
+        // Garante que os botões Pausar e Zerar tenham a mesma largura que o Iniciar
+        landscapeConstraints.constrainWidth(R.id.btnPausar, ConstraintSet.MATCH_CONSTRAINT)
+        landscapeConstraints.constrainWidth(R.id.btnZerar, ConstraintSet.MATCH_CONSTRAINT)
 
     }
 
@@ -113,7 +190,6 @@ class MainActivity : AppCompatActivity() {
         val tempoFormatado =
             String.format(Locale.getDefault(), "%02d:%02d", novosMinutos, novosSegundos)
         binding.editTextTimer.setText(tempoFormatado)
-
     }
 
     private fun iniciarOuContinuarTimer() {
@@ -161,15 +237,26 @@ class MainActivity : AppCompatActivity() {
                 binding.editTextTimer.setText("00:00")
                 Toast.makeText(this@MainActivity, "Tempo esgotado!", Toast.LENGTH_LONG).show()
                 try {
-                    val mediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.alarmbeep)
-                    mediaPlayer.start()
-                    mediaPlayer?.setOnCompletionListener { player ->
-                        player.release()
+                    mediaPlayer?.release()
+                    mediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.alarmbeep)
+                    mediaPlayer?.isLooping = true // Opcional: faz o alarme repetir até ser parado
+                    mediaPlayer?.start()
+                    val pattern = longArrayOf(0, 1000, 500)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0)) // 0 para repetir
+                    } else {
+                        // Método antigo para APIs mais velhas
+                        @Suppress("DEPRECATION")
+                        vibrator.vibrate(pattern, 0)
                     }
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                zerarTimer()
+                timerEstaRodando = false
+                tempoRestanteEmMs = 0
+                binding.editTextTimer.isEnabled = true
+                binding.btnIniciar.text = getString(R.string.botao_iniciar)
             }
         }.start()
 
@@ -188,6 +275,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun zerarTimer() {
+        vibrator.cancel()
+
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+            }
+            it.release() // Libera os recursos do MediaPlayer
+            mediaPlayer = null // Limpa a referência
+        }
+
         countDownTimer?.cancel()
         tempoRestanteEmMs = 0
         timerEstaRodando = false
@@ -209,6 +306,15 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
+        vibrator.cancel()
+    // Garante que o som pare e os recursos sejam liberados ao fechar o app
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+            }
+            it.release()
+            mediaPlayer = null
+        }
     }
 }
 
