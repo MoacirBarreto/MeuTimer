@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fundo_app">#1C1C1E</color> <!-- Cinza super escuro, quase preto -->
+    <color name="texto_primario">#FFFFFF</color> <!-- Branco puro para máxima legibilidade -->
+    <color name="texto_secundario">#B0B0B0</color> <!-- Cinza claro para textos menos importantes -->
+    <color name="cor_destaque">#00F5D4</color> <!-- Um verde-água vibrante que se destaca no escuro -->
+    <color name="cor_destaque_texto">#000000</color> <!-- Preto para texto sobre a cor de destaque -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

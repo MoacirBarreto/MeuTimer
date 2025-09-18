@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Meu Timer</string>
+    <string name="titulo_app">Meu Timer</string>
+    <string name="timer_hint">00:00</string>
+    <string name="desc_aumentar_minuto">Aumentar minutos</string>
+    <string name="desc_diminuir_minuto">Diminuir minutos</string>
+    <string name="desc_aumentar_segundo">Aumentar segundos</string>
+    <string name="desc_diminuir_segundo">Diminuir minutos</string>
+    <string name="botao_iniciar">Iniciar</string>
+    <string name="botao_pausar">Pausar</string>
+    <string name="botao_zerar">Zerar</string>
+</resources>
